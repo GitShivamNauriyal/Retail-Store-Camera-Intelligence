@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: store_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: purplle_admin
+      POSTGRES_PASSWORD: purplle_secure_pass
+      POSTGRES_DB: store_intelligence
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker_data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U purplle_admin -d store_intelligence"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: store_redis
+    restart: always
+    command: redis-server --save "" --appendonly no
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./.docker_data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: store_grafana
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./.docker_data/grafana:/var/lib/grafana
+    depends_on:
+      postgres:
+        condition: service_healthy
