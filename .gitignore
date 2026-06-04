@@ -27,6 +27,7 @@ htmlcov/
 *.pt
 *.onnx
 *.weights
+*.whl
 dataset/
 dataset_resource/
 
