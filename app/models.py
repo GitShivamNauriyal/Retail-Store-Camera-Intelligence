@@ -43,6 +43,18 @@ class TrackedEvent(Base):
     confidence: Mapped[float] = mapped_column(Float, default=1.0)
     metadata_json: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
+class POSTransaction(Base):
+    __tablename__ = "pos_transactions"
+    order_id: Mapped[str] = mapped_column(String, primary_key=True)
+    order_date: Mapped[str] = mapped_column(String, index=True)
+    order_time: Mapped[str] = mapped_column(String, index=True)
+    store_id: Mapped[str] = mapped_column(String, index=True)
+    product_id: Mapped[str] = mapped_column(String)
+    brand_name: Mapped[str] = mapped_column(String)
+    total_amount: Mapped[float] = mapped_column(Float)
+    
+    # Combined timestamp for easier querying
+    transaction_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True, nullable=True)
 # --- Pydantic Schemas for Ingestion API ---
 
 class EventInboundSchema(BaseModel):

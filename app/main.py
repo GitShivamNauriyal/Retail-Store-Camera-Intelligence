@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.database import engine
 from app.models import Base
 from app.health import router as health_router
+from app.routes.analytics import router as analytics_router
 from app.ingestion import start_background_worker, stop_background_worker
 
 # Set up logging format
@@ -20,6 +21,7 @@ app = FastAPI(
 
 # Register routes
 app.include_router(health_router, prefix="/api/v1")
+app.include_router(analytics_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup_event():
