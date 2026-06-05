@@ -6,15 +6,15 @@ services:
     container_name: store_postgres
     restart: always
     environment:
-      POSTGRES_USER: purplle_admin
-      POSTGRES_PASSWORD: purplle_secure_pass
+      POSTGRES_USER: store_admin
+      POSTGRES_PASSWORD: store_secure_pass
       POSTGRES_DB: store_intelligence
     ports:
       - "5433:5432"
     volumes:
       - ./.docker_data/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U purplle_admin -d store_intelligence"]
+      test: ["CMD-SHELL", "pg_isready -U store_admin -d store_intelligence"]
       interval: 10s
       timeout: 5s
       retries: 5

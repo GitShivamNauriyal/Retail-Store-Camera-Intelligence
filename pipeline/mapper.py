@@ -51,7 +51,7 @@ def main():
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord('n'):
-            current_zone_name = input("Enter zone name (e.g., PURPLLE_MUM_1076_Z01): ")
+            current_zone_name = input("Enter zone name (e.g., STORE_MUM_1076_Z01): ")
             points = []
             print(f"Started zone: {current_zone_name}. Click to add points.")
             

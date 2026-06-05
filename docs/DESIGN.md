@@ -1,7 +1,7 @@
 # System Design Architecture
 
 ## Overview
-The Apex Retail Store Intelligence API is designed as a highly scalable, decoupled, and event-driven architecture. This architecture separates the computationally expensive Computer Vision (CV) inference tasks from the asynchronous data ingestion and analytics backend, ensuring the system remains responsive, fault-tolerant, and performant on edge hardware.
+The Retail Store Camera Intelligence API is designed as a highly scalable, decoupled, and event-driven architecture. This architecture separates the computationally expensive Computer Vision (CV) inference tasks from the asynchronous data ingestion and analytics backend, ensuring the system remains responsive, fault-tolerant, and performant on edge hardware.
 
 ## Event-Driven Architecture
 
@@ -15,6 +15,8 @@ Our pipeline consists of four distinct stages:
    A lightweight, asynchronous background task runs within the FastAPI lifecycle (`app/ingestion.py`). It continuously polls the Redis stream (via XREAD) for new events, normalizes the data schema on the fly, and batches the inserts.
 4. **PostgreSQL Data Layer:** 
    The asynchronous worker performs bulk upserts into the PostgreSQL database. The business intelligence routes then query this relational data to serve real-time analytics.
+5. **Live Grafana Visualization:**
+   A pre-configured Grafana instance connects directly to the PostgreSQL data layer to render real-time dashboards containing Footfall, Conversion Rates, and Demographic Breakdowns without imposing extra load on the FastAPI worker.
 
 ## Handling Real-World Uncertainty
 
@@ -35,3 +37,10 @@ To calculate accurate Store Conversion Rates, we implemented a **+/- 3 Minute Fu
 - We successfully link the records if the difference is `<= 180` seconds (3 minutes).
 
 This probabilistic matching overcomes real-world friction and allows us to accurately map demographic predictions (age, gender) to actual revenue (Average Order Value).
+
+## Hackathon Demo Constraints & Injections
+
+For the purposes of a seamless live demonstration without manual pre-configuration:
+1. **Unified Zones:** A default `zones.json` file is utilized which classifies the entire camera frame as a `BILLING_ZONE`, ensuring immediate data flow into the dashboard without the manual polygon tracing step.
+2. **Mock Demographics:** Since YOLOv8n only natively identifies the "person" class and lacks age/gender estimators, realistic mock demographic attributes (weighted appropriately) are injected by the tracker in real-time.
+3. **Demo Query Mode:** The historical POS sample data (from April 2026) cannot strictly fuzzy-match against the live video feed processing time (June 2026) within a 3-minute window. To successfully demonstrate the architecture, the Grafana live queries compute the ratios probabilistically from the real-time footfall.

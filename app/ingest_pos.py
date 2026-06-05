@@ -1,4 +1,8 @@
 import os
+import sys
+# Add the parent directory (Code/) to the Python path so 'app' can be imported
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
 from sqlalchemy import create_engine
 from app.models import Base
@@ -7,7 +11,7 @@ import argparse
 # The DB URL for synchronous operations using psycopg2 (default postgresql:// driver)
 DATABASE_URL = os.getenv(
     "SYNC_DATABASE_URL", 
-    "postgresql://purplle_admin:purplle_secure_pass@127.0.0.1:5433/store_intelligence"
+    "postgresql://store_admin:store_secure_pass@127.0.0.1:5433/store_intelligence"
 )
 
 def main():
@@ -59,9 +63,15 @@ def main():
     columns_to_insert = expected_cols + ["transaction_timestamp"]
     df_insert = df[columns_to_insert]
     
+    from sqlalchemy.exc import IntegrityError
     try:
         df_insert.to_sql("pos_transactions", engine, if_exists="append", index=False)
         print(f"Successfully ingested {len(df_insert)} records into 'pos_transactions'.")
+    except IntegrityError as e:
+        if "duplicate key" in str(e) or "UniqueViolation" in str(e):
+            print("Data has already been ingested. Skipping duplicate insertion to prevent primary key conflicts.")
+        else:
+            print(f"Database Integrity Error: {e}")
     except Exception as e:
         print(f"Failed to insert data to SQL: {e}")
 

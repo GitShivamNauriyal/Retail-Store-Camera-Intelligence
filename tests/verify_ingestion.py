@@ -5,7 +5,7 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy import text
 
-DATABASE_URL = "postgresql+asyncpg://purplle_admin:purplle_secure_pass@127.0.0.1:5433/store_intelligence"
+DATABASE_URL = "postgresql+asyncpg://store_admin:store_secure_pass@127.0.0.1:5433/store_intelligence"
 REDIS_URL = "redis://localhost:6379"
 
 async def test():

@@ -20,8 +20,10 @@ check_gpu()
 from ultralytics import YOLO
 import cv2
 
+import random
+
 class ZoneTracker:
-    def __init__(self, zones_file, redis_host='localhost', redis_port=6379, store_id="ST1076", camera_id="CAM1"):
+    def __init__(self, zones_file, redis_host='localhost', redis_port=6379, store_id="ST1008", camera_id="CAM1"):
         self.store_id = store_id
         self.camera_id = camera_id
         
@@ -61,17 +63,25 @@ class ZoneTracker:
         elif "SHELF" in zone_id.upper():
             zone_type = "SHELF"
             
+        # Inject mock demographics for the hackathon demo since YOLOv8n doesn't output this natively
+        age_buckets = ["18-24", "25-34", "35-44", "45-54"]
+        genders = ["Female", "Female", "Female", "Male", "Other"] # Weighted towards female based on typical retail demographics
+        
         event_payload = {
             "event_type": event_type,
             "track_id": int(track_id),
             "store_id": self.store_id,
             "camera_id": self.camera_id,
             "zone_id": zone_id,
-            "zone_name": zone_id,  # using ID as name for simplicity if not mapped
+            "zone_name": zone_id,
             "zone_type": zone_type,
             "event_time": now,
             "zone_hotspot_x": float(hotspot[0]),
-            "zone_hotspot_y": float(hotspot[1])
+            "zone_hotspot_y": float(hotspot[1]),
+            "metadata_json": {
+                "age_bucket": random.choice(age_buckets),
+                "gender": random.choice(genders)
+            }
         }
         
         try:
@@ -143,6 +153,7 @@ def main():
     
     # We only care about people (class 0 in COCO)
     # device='0' enforces GPU usage
+    total_people_spotted = set()
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -172,6 +183,7 @@ def main():
                         'track_id': track_id,
                         'bbox': [x1, y1, x2, y2]
                     })
+                    total_people_spotted.add(track_id)
                     
         tracker.update(parsed_tracks)
         
@@ -181,9 +193,18 @@ def main():
             # Draw zones
             for z_name, polygon in tracker.zones.items():
                 pts_arr = polygon.reshape((-1, 1, 2))
-                cv2.polylines(annotated_frame, [pts_arr], True, (0, 255, 255), 2)
-                cv2.putText(annotated_frame, z_name, tuple(polygon[0]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+                cv2.polylines(annotated_frame, [pts_arr], True, (0, 255, 255), 3)
                 
+                # Draw filled background for text for better visibility
+                text_size = cv2.getTextSize(z_name, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)[0]
+                text_org = (polygon[0][0], polygon[0][1] - 10)
+                cv2.rectangle(annotated_frame, (text_org[0], text_org[1] - text_size[1] - 5), (text_org[0] + text_size[0] + 5, text_org[1] + 5), (0, 0, 0), -1)
+                cv2.putText(annotated_frame, z_name, text_org, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                
+            # Draw Live Counter
+            cv2.rectangle(annotated_frame, (10, 10), (380, 60), (0, 0, 0), -1)
+            cv2.putText(annotated_frame, f"Total People Spotted: {len(total_people_spotted)}", (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            
             cv2.imshow("Tracker", annotated_frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break

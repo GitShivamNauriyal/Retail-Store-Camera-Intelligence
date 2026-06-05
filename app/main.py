@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Purplle Store Intelligence Ingestion API",
+    title="Store Intelligence Ingestion API",
     description="Asynchronous ingestion backend for real-time customer tracking and analytics",
     version="1.0.0"
 )

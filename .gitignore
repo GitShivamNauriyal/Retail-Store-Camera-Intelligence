@@ -21,6 +21,7 @@ htmlcov/
 *.sqlite
 
 # Large assets and model files
+*.zip
 *.mp4
 *.avi
 *.mkv
@@ -34,3 +35,6 @@ dataset_resource/
 # IDE settings
 .vscode/
 .idea/
+
+# Internal Briefing
+briefing.md

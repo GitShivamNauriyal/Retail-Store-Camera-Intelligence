@@ -4,7 +4,7 @@ from redis.asyncio import Redis
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql+asyncpg://purplle_admin:purplle_secure_pass@127.0.0.1:5433/store_intelligence"
+    "postgresql+asyncpg://store_admin:store_secure_pass@127.0.0.1:5433/store_intelligence"
 )
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
