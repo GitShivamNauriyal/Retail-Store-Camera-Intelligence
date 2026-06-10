@@ -1,7 +1,7 @@
 # System Design Architecture
 
 ## Overview
-The Retail Store Camera Intelligence API is designed as a highly scalable, decoupled, and event-driven architecture. This architecture separates the computationally expensive Computer Vision (CV) inference tasks from the asynchronous data ingestion and analytics backend, ensuring the system remains responsive, fault-tolerant, and performant on edge hardware.
+The Retail Store Camera Intelligence system is designed as a highly scalable, decoupled, and event-driven architecture. This architecture separates the computationally expensive Computer Vision (CV) inference tasks from the asynchronous data ingestion and analytics backend, ensuring the system remains responsive, fault-tolerant, and performant on edge hardware.
 
 ## Event-Driven Architecture
 

@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Store Intelligence Ingestion API",
+    title="Store Intelligence Ingestion",
     description="Asynchronous ingestion backend for real-time customer tracking and analytics",
     version="1.0.0"
 )
@@ -25,7 +25,7 @@ app.include_router(analytics_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Initializing Store Intelligence API...")
+    logger.info("Initializing Store Intelligence Ingestion...")
     
     # 1. Initialize Database Tables
     try:
@@ -44,7 +44,7 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    logger.info("Shutting down Store Intelligence API...")
+    logger.info("Shutting down Store Intelligence Ingestion...")
     
     # 1. Stop Background Worker
     await stop_background_worker()

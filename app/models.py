@@ -55,7 +55,7 @@ class POSTransaction(Base):
     
     # Combined timestamp for easier querying
     transaction_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True, nullable=True)
-# --- Pydantic Schemas for Ingestion API ---
+# --- Pydantic Schemas for Ingestion ---
 
 class EventInboundSchema(BaseModel):
     event_id: Optional[str] = None

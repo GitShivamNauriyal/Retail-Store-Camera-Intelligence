@@ -1,6 +1,6 @@
 # Architectural Choices & Justifications
 
-Building an edge-capable Store Intelligence API requires carefully balancing performance, memory constraints, and data reliability. Below are the core technical choices we made and why.
+Building an edge-capable Store Intelligence system requires carefully balancing performance, memory constraints, and data reliability. Below are the core technical choices we made and why.
 
 ## 1. Why PostgreSQL over SQLite?
 While SQLite is simpler to set up, it natively employs database-level or table-level locking during writes. In our system, the CV pipeline is constantly streaming hundreds of tracking events per minute, which would result in severe lock contention in SQLite, dropping events or bottlenecking the FastAPI worker. 

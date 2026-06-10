@@ -1,4 +1,4 @@
-# Retail Store Camera Intelligence API
+# Retail Store Camera Intelligence
 
 Retail Store Camera Intelligence is a high-performance, real-time computer vision and analytics platform built for modern physical retail spaces. It seamlessly combines edge AI video tracking with Point of Sale (POS) data to deliver actionable insights on store traffic, customer demographics, and conversion rates.
 
